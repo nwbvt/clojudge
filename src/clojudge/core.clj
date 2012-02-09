@@ -10,7 +10,7 @@
   [input & validators]
   (let [results (map #(% input) validators)]
     {:valid? (every? valid? results)
-     :errors (lazy-cat (map errors results))}))
+     :errors (reduce into (map errors results))}))
 
 (extend-type java.lang.Boolean
   Result
