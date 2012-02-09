@@ -9,7 +9,7 @@
   (if (even? n) [] ["Number is not even"]))
 
 (defn map-judge [n]
-  (if (even? n) {:result true} {:result false :errors ["Number is not even"]}))
+  (if (even? n) {:valid? true} {:valid? false :errors ["Number is not even"]}))
 
 (defn reified-result-judge [n]
   (if (even? n) 
@@ -20,13 +20,13 @@
       (valid? [_] false)
       (errors [_] ["Number is not even"]))))
 
-(deftest test-simple-judge
+(deftest test-single-judge
   (doseq [j [simple-judge error-message-judge map-judge]]
-    (is (true? (valid? (judge 0 j))))
-    (is (= [] (errors (judge 0 j))))
-    (is (false? (valid? (judge 1 j))))
+    (is (true? (valid? (judge 0 j))) (str "failure to mark valid: " j))
+    (is (empty? (errors (judge 0 j))) (str "failure to get empty errors: " j))
+    (is (false? (valid? (judge 1 j))) (str "failure to mark invalid: " j))
     (if (not (= simple-judge j))
-      (is (= ["Number is not even"] (errors (judge 1 j)))))))
+      (is (= ["Number is not even"] (errors (judge 1 j))) (str "failure to get errors: " j)))))
 
 (deftest test-multiple-judges
   (is (true? (valid? (judge 0 simple-judge (constantly true)))))
