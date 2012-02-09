@@ -14,11 +14,11 @@
 (defn reified-result-judge [n]
   (if (even? n) 
     (reify Result
-      (valid? [] true)
-      (errors [] []))
+      (valid? [_] true)
+      (errors [_] []))
     (reify Result
-      (valid? [] false)
-      (errors [] ["Number is not even"]))))
+      (valid? [_] false)
+      (errors [_] ["Number is not even"]))))
 
 (deftest test-simple-judge
   (doseq [j [simple-judge error-message-judge map-judge]]
@@ -26,4 +26,10 @@
     (is (= [] (errors (judge 0 j))))
     (is (false? (valid? (judge 1 j))))
     (if (not (= simple-judge j))
-      (is (= ["Number is not even"] (errors (judge 1 j))))))
+      (is (= ["Number is not even"] (errors (judge 1 j)))))))
+
+(deftest test-multiple-judges
+  (is (true? (valid? (judge 0 simple-judge (constantly true)))))
+  (is (false? (valid? (judge 1 simple-judge (constantly true)))))
+  (is (= #{"Number is not even" "All shall fail"} 
+         (set (errors (judge 1 error-message-judge (constantly ["All shall fail"])))))))
