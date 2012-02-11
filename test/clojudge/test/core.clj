@@ -20,16 +20,20 @@
       (valid? [_] false)
       (errors [_] ["Number is not even"]))))
 
-(deftest test-single-judge
-  (doseq [j [simple-judge error-message-judge map-judge]]
-    (is (true? (valid? (judge 0 j))) (str "failure to mark valid: " j))
-    (is (empty? (errors (judge 0 j))) (str "failure to get empty errors: " j))
-    (is (false? (valid? (judge 1 j))) (str "failure to mark invalid: " j))
-    (if (not (= simple-judge j))
-      (is (= ["Number is not even"] (errors (judge 1 j))) (str "failure to get errors: " j)))))
+(def jury [simple-judge error-message-judge])
 
-(deftest test-multiple-judges
-  (is (true? (valid? (judge 0 simple-judge (constantly true)))))
-  (is (false? (valid? (judge 1 simple-judge (constantly true)))))
+(deftest test-single-judge
+  (doseq [j [simple-judge error-message-judge map-judge jury]]
+    (is (true? (valid? (judge j 0))) (str "failure to mark valid: " j))
+    (is (empty? (errors (judge j 0))) (str "failure to get empty errors: " j))
+    (is (false? (valid? (judge j 1))) (str "failure to mark invalid: " j))
+    (if (not (= simple-judge j))
+      (is (= ["Number is not even"] (errors (judge j 1))) (str "failure to get errors: " j)))))
+
+(deftest test-conflicting-judges
+  (is (true? (valid? (judge [simple-judge (constantly true)] 0))))
+  (is (false? (valid? (judge [simple-judge (constantly true)] 1))))
   (is (= #{"Number is not even" "All shall fail"} 
-         (set (errors (judge 1 error-message-judge (constantly ["All shall fail"])))))))
+         (set (errors (judge [error-message-judge (constantly ["All shall fail"])] 1))))))
+
+
