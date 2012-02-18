@@ -25,6 +25,13 @@
     (valid? [m] (:valid? m))
     (errors [m] (:errors m)))
 
+(defn- make-judgement
+  "Determines whether or not a given input is valid according to a list of validators"
+  [input validators]
+  (let [results (map #(% input) validators)]
+    {:valid? (every? valid? results)
+     :errors (reduce into (map errors results))}))
+
 (extend-type java.util.List
   Result
   ;; If it is a result, a list simply contains a list of errors
@@ -34,10 +41,3 @@
   Judge
   ;; Lists serve as judges by evaluating the input against each member
     (judge [l input] (make-judgement input l)))
-
-(defn- make-judgement
-  "Determines whether or not a given input is valid according to a list of validators"
-  [input validators]
-  (let [results (map #(% input) validators)]
-    {:valid? (every? valid? results)
-     :errors (reduce into (map errors results))}))
