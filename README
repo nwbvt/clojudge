@@ -4,7 +4,18 @@ A library for validation
 
 ## Usage
 
-FIXME: write
+Validation functions can consist of functions that, based on their single input, return either
+ -a boolean indicating whether or not the input is valid
+ -a list of error messages (an empty list indicates the input is valid)
+ -a map containing the keys :valid? (a boolean indicating validity) and :errors (the error list)
+ -anything implementing the clojudge.core.Result protocol
+
+Judges can be either one of these validation fucntions or a list of said functions
+For lists, the input will be valid iff it is valid for each member
+
+Then for some judge j
+(judge j input)
+will return a clojudge.core.Result indicating the validity and errors
 
 ## License
 

@@ -1,3 +1,3 @@
-(defproject clojudge "1.0.0-SNAPSHOT"
-  :description "FIXME: write description"
+(defproject clojudge "0.1"
+  :description "A clojure validation library"
   :dependencies [[org.clojure/clojure "1.3.0"]])
